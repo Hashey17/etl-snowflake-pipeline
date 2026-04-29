@@ -1,0 +1,1 @@
+[  {"order_id": 1, "customer_id": 101, "amount": 200, "region": "US"},  {"order_id": 2, "customer_id": 102, "amount": null, "region": "EU"},  {"order_id": 3, "customer_id": 103, "amount": 150, "region": "APAC"},  {"order_id": 4, "customer_id": 104, "amount": -50, "region": "US"}]
