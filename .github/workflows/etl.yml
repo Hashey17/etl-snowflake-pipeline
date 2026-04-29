@@ -1,0 +1,37 @@
+name: ETL CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        working-directory: .
+
+      - name: Run ETL pipeline
+        env:
+          USER: ci-user
+          PASSWORD: ci-password
+          ACCOUNT: ci-account
+          WAREHOUSE: ci-warehouse
+          DATABASE: ci-database
+        run: |
+          set -euo pipefail
+          python etl_pipeline.py
+        working-directory: .
