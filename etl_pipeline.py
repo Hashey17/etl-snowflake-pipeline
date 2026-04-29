@@ -147,17 +147,6 @@ class SnowflakeConfig:
 
 
 def get_snowflake_config_from_env() -> SnowflakeConfig:
-    """
-    Read Snowflake credentials from environment variables.
-
-    Required env vars (prioritized with the raw names you requested, with
-    fallback to SNOWFLAKE_* names):
-    - SNOWFLAKE_USER / USER
-    - SNOWFLAKE_PASSWORD / PASSWORD
-    - SNOWFLAKE_ACCOUNT / ACCOUNT
-    - SNOWFLAKE_WAREHOUSE / WAREHOUSE
-    - SNOWFLAKE_DATABASE / DATABASE
-    """
     user = _env_first_of(["USER", "SNOWFLAKE_USER"])
     password = _env_first_of(["PASSWORD", "SNOWFLAKE_PASSWORD"])
     account = _env_first_of(["ACCOUNT", "SNOWFLAKE_ACCOUNT"])
@@ -165,32 +154,17 @@ def get_snowflake_config_from_env() -> SnowflakeConfig:
     database = _env_first_of(["DATABASE", "SNOWFLAKE_DATABASE"])
     schema = _env_first_of(["SNOWFLAKE_SCHEMA"]) or "PUBLIC"
 
-    missing: List[str] = []
-    if not user:
-        missing.append("SNOWFLAKE_USER/USER")
-    if not password:
-        missing.append("SNOWFLAKE_PASSWORD/PASSWORD")
-    if not account:
-        missing.append("SNOWFLAKE_ACCOUNT/ACCOUNT")
-    if not warehouse:
-        missing.append("SNOWFLAKE_WAREHOUSE/WAREHOUSE")
-    if not database:
-        missing.append("SNOWFLAKE_DATABASE/DATABASE")
-
-    if missing:
-        raise ETLConfigError(f"Missing Snowflake env vars: {', '.join(missing)}")
+    if not all([user, password, account, warehouse, database]):
+        raise ETLConfigError("Missing Snowflake environment variables")
 
     return SnowflakeConfig(
-        return SnowflakeConfig(
-    user=user,
-    password=password,
-    account=account,
-    warehouse=warehouse,
-    database=database,
-    schema=schema,
-)
+        user=user,
+        password=password,
+        account=account,
+        warehouse=warehouse,
+        database=database,
+        schema=schema,
     )
-
 
 def load_to_snowflake_mock(rows: List[Dict[str, Any]], config: SnowflakeConfig) -> None:
     """
